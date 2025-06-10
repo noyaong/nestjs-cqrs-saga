@@ -399,7 +399,7 @@ GET /health/detailed   # 상세 시스템 상태
 
 ## 📚 추가 리소스
 
-### 문서
+### 문서 (예정)
 - [CQRS 패턴 가이드](./docs/cqrs-pattern.md)
 - [Saga 패턴 구현](./docs/saga-pattern.md)
 - [API 문서](./docs/api-reference.md)
