@@ -15,7 +15,7 @@ graph TB
         end
         
         subgraph "Application Layer"
-            SVC[NestJS Service]
+            SVC[NestJS Service] 
             POD1[NestJS Pod 1]
             POD2[NestJS Pod 2]
             POD3[NestJS Pod 3]
