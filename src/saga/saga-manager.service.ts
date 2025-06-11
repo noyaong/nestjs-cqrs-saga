@@ -4,6 +4,7 @@ import { Repository, QueryRunner, DataSource } from 'typeorm';
 import { CommandBus } from '@nestjs/cqrs';
 import { SagaInstance, SagaStatus } from './entities/saga-instance.entity';
 import { KafkaService } from '../kafka/kafka.service';
+import { RedisLockService } from '../redis/redis-lock.service';
 
 export interface SagaStep {
   name: string;
@@ -21,6 +22,7 @@ export class SagaManager {
     private readonly commandBus: CommandBus,
     private readonly kafkaService: KafkaService,
     private readonly dataSource: DataSource,
+    private readonly redisLockService: RedisLockService,
   ) {}
 
   async startSaga(
@@ -31,48 +33,57 @@ export class SagaManager {
   ): Promise<SagaInstance> {
     this.logger.log(`Starting saga: ${sagaType} with correlation ID: ${correlationId}`);
 
-    try {
-      // 기존 Saga 확인 (중복 방지)
-      const existingSaga = await this.sagaRepository.findOne({
-        where: { correlationId, sagaType },
-      });
+    // 🔒 분산락 키 생성
+    const lockKey = `saga_creation:${sagaType}:${correlationId}`;
+    
+    // 🔒 분산락과 함께 Saga 생성 (자동 해제)
+    return await this.redisLockService.withLock(
+      lockKey,
+      async () => {
+        // 기존 Saga 확인 (중복 방지)
+        const existingSaga = await this.sagaRepository.findOne({
+          where: { correlationId, sagaType },
+        });
 
-      if (existingSaga) {
-        this.logger.warn(`Saga already exists for correlation ID: ${correlationId}`);
-        return existingSaga;
-      }
+        if (existingSaga) {
+          this.logger.warn(`Saga already exists for correlation ID: ${correlationId}`);
+          return existingSaga;
+        }
 
-      // Saga 인스턴스 생성 (단순한 저장)
-      const saga = this.sagaRepository.create({
-        sagaType,
-        correlationId,
-        status: SagaStatus.STARTED,
-        data,
-        completedSteps: [],
-        compensationSteps: [],
-        currentStep: steps[0]?.name || 'initial',
-      });
-
-      const savedSaga = await this.sagaRepository.save(saga);
-
-      // Saga 시작 이벤트 발행
-      setImmediate(async () => {
-        await this.kafkaService.publish('saga-events', {
-          type: 'SagaStarted',
-          sagaId: savedSaga.id,
+        // Saga 인스턴스 생성
+        const saga = this.sagaRepository.create({
           sagaType,
           correlationId,
+          status: SagaStatus.STARTED,
           data,
-          timestamp: new Date().toISOString(),
+          completedSteps: [],
+          compensationSteps: [],
+          currentStep: steps[0]?.name || 'initial',
         });
-      });
 
-      return savedSaga;
+        const savedSaga = await this.sagaRepository.save(saga);
+        this.logger.log(`Saga created with distributed lock: ${savedSaga.id}`);
 
-    } catch (error) {
-      this.logger.error(`Failed to start saga: ${sagaType}`, error);
-      throw error;
-    }
+        // Saga 시작 이벤트 발행
+        setImmediate(async () => {
+          await this.kafkaService.publish('saga-events', {
+            type: 'SagaStarted',
+            sagaId: savedSaga.id,
+            sagaType,
+            correlationId,
+            data,
+            timestamp: new Date().toISOString(),
+          });
+        });
+
+        return savedSaga;
+      },
+      {
+        ttl: 30000, // 30초 TTL
+        retryCount: 3,
+        retryDelay: 100,
+      }
+    );
   }
 
   async executeSagaStep(
@@ -80,45 +91,59 @@ export class SagaManager {
     stepName: string,
     executeStep: () => Promise<void>,
   ): Promise<void> {
+    // 🔒 단계별 실행 락 키 생성
+    const lockKey = `saga_step:${sagaId}:${stepName}`;
+    
     try {
-      const saga = await this.sagaRepository.findOne({
-        where: { id: sagaId },
-      });
+      // 🔒 분산락과 함께 단계 실행
+      await this.redisLockService.withLock(
+        lockKey,
+        async () => {
+          const saga = await this.sagaRepository.findOne({
+            where: { id: sagaId },
+          });
 
-      if (!saga) {
-        throw new Error(`Saga not found: ${sagaId}`);
-      }
+          if (!saga) {
+            throw new Error(`Saga not found: ${sagaId}`);
+          }
 
-      // 중복 실행 방지
-      if (saga.completedSteps.includes(stepName)) {
-        this.logger.warn(`Step ${stepName} already completed for saga: ${sagaId}`);
-        return;
-      }
+          // 중복 실행 방지
+          if (saga.completedSteps.includes(stepName)) {
+            this.logger.warn(`Step ${stepName} already completed for saga: ${sagaId}`);
+            return;
+          }
 
-      this.logger.log(`Executing saga step: ${stepName} for saga: ${sagaId}`);
-      
-      // 실행 상태 업데이트
-      saga.currentStep = stepName;
-      await this.sagaRepository.save(saga);
+          this.logger.log(`Executing saga step with lock: ${stepName} for saga: ${sagaId}`);
+          
+          // 실행 상태 업데이트
+          saga.currentStep = stepName;
+          await this.sagaRepository.save(saga);
 
-      // 단계 실행
-      await executeStep();
-      
-      // 성공 시 완료된 단계에 추가
-      saga.completedSteps.push(stepName);
-      await this.sagaRepository.save(saga);
+          // 단계 실행
+          await executeStep();
+          
+          // 성공 시 완료된 단계에 추가
+          saga.completedSteps.push(stepName);
+          await this.sagaRepository.save(saga);
 
-      setImmediate(async () => {
-        await this.kafkaService.publish('saga-events', {
-          type: 'SagaStepCompleted',
-          sagaId,
-          stepName,
-          completedSteps: saga.completedSteps,
-          timestamp: new Date().toISOString(),
-        });
-      });
+          setImmediate(async () => {
+            await this.kafkaService.publish('saga-events', {
+              type: 'SagaStepCompleted',
+              sagaId,
+              stepName,
+              completedSteps: saga.completedSteps,
+              timestamp: new Date().toISOString(),
+            });
+          });
 
-      this.logger.log(`Saga step completed: ${stepName} for saga: ${sagaId}`);
+          this.logger.log(`Saga step completed with lock: ${stepName} for saga: ${sagaId}`);
+        },
+        {
+          ttl: 60000, // 1분 TTL (실행 시간 고려)
+          retryCount: 2,
+          retryDelay: 200,
+        }
+      );
 
     } catch (error) {
       this.logger.error(`Saga step failed: ${stepName} for saga: ${sagaId}`, error);

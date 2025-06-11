@@ -1,0 +1,11 @@
+ time_group  |                  id                  |                                                         product_info                                                         |  timestamp_epoch  | concurrent_requests | group_duration | processing_order 
+-------------+--------------------------------------+------------------------------------------------------------------------------------------------------------------------------+-------------------+---------------------+----------------+------------------
+ 17496438719 | d815ac87-429b-440c-b463-893165533743 | [{"price": 5959, "quantity": 1, "productId": "LIMITED_EDITION_002", "productName": "Duplicate Product LIMITED_EDITION_002"}] | 1749643871.902591 |                   7 |       0.019436 |                1
+ 17496438719 | fd6e5107-e69e-472a-8571-b3d2a0d08e3c | [{"price": 1800, "quantity": 2, "productId": "UNIQUE_E005", "productName": "Individual Product UNIQUE_E005"}]                | 1749643871.916513 |                   7 |       0.019436 |                2
+ 17496438719 | f850e753-bfa1-4087-9a9f-5d2bc0974766 | [{"price": 7877, "quantity": 1, "productId": "SALE_SPECIAL_003", "productName": "Duplicate Product SALE_SPECIAL_003"}]       | 1749643871.916728 |                   7 |       0.019436 |                3
+ 17496438719 | 79425b78-b2ad-4ab0-b4d8-db643a8c5321 | [{"price": 1600, "quantity": 2, "productId": "UNIQUE_D004", "productName": "Individual Product UNIQUE_D004"}]                | 1749643871.921448 |                   7 |       0.019436 |                4
+ 17496438719 | d0173eaa-8e05-484d-b6b4-eebd29cfbbcd | [{"price": 1000, "quantity": 3, "productId": "UNIQUE_A001", "productName": "Individual Product UNIQUE_A001"}]                | 1749643871.921734 |                   7 |       0.019436 |                5
+ 17496438719 | e8c57fff-b9f5-4abb-8b20-f5b08847bf11 | [{"price": 1200, "quantity": 3, "productId": "UNIQUE_B002", "productName": "Individual Product UNIQUE_B002"}]                | 1749643871.921866 |                   7 |       0.019436 |                6
+ 17496438719 | 80cef4d5-0ca9-4e1d-a9ed-55643a99cf75 | [{"price": 1400, "quantity": 2, "productId": "UNIQUE_C003", "productName": "Individual Product UNIQUE_C003"}]                | 1749643871.922027 |                   7 |       0.019436 |                7
+(7 rows)
+

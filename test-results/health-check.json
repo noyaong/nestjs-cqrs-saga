@@ -1,0 +1,9 @@
+{
+  "status": "ok",
+  "timestamp": "2025-06-11T12:10:33.682Z",
+  "environment": "development",
+  "database": {
+    "connected": true,
+    "name": "nestjs_cqrs"
+  }
+}

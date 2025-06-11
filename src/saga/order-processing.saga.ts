@@ -25,7 +25,12 @@ export class OrderProcessingSaga {
   async handleOrderCreated(event: OrderCreatedEvent): Promise<void> {
     this.logger.log(`Starting Order Processing Saga for order: ${event.orderId}`);
 
-    const correlationId = event.correlationId || uuidv4();
+    const correlationId = event.correlationId;
+    
+    if (!correlationId) {
+      this.logger.error(`Missing correlationId in OrderCreatedEvent for order: ${event.orderId}`);
+      return;
+    }
 
     // Saga 시작
     const saga = await this.sagaManager.startSaga(

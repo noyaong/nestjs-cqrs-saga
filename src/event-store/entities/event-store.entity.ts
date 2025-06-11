@@ -34,9 +34,9 @@ export class EventStore {
   @CreateDateColumn()
   occurredAt: Date;
 
-  @Column({ type: 'uuid', nullable: true })
+  @Column({ type: 'text', nullable: true })
   causationId: string; // 이 이벤트를 발생시킨 커맨드/이벤트 ID
 
-  @Column({ type: 'uuid', nullable: true })
+  @Column({ type: 'text', nullable: true })
   correlationId: string; // 전체 비즈니스 프로세스 추적 ID
 }

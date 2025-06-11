@@ -58,6 +58,12 @@ export class Order {
   @Column('jsonb', { nullable: true })
   metadata: Record<string, any>;
 
+  @Column({ nullable: true, unique: true })
+  idempotencyKey: string;
+
+  @Column({ nullable: true })
+  nodeId: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

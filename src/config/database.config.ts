@@ -10,8 +10,9 @@ export const databaseConfig = registerAs(
     username: process.env.DATABASE_USER || 'postgres',
     password: process.env.DATABASE_PASSWORD || 'postgres123',
     database: process.env.DATABASE_NAME || 'nestjs_cqrs',
-    entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-    synchronize: process.env.NODE_ENV !== 'production', // 개발 환경에서만 true
+    entities: [__dirname + '/../**/*.entity.js'],
+    migrations: [__dirname + '/../migrations/*{.ts,.js}'],
+    synchronize: true, // 개발 환경에서 Entity 변경사항 자동 반영
     logging: process.env.NODE_ENV === 'development',
     ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
     

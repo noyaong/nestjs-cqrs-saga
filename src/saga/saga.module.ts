@@ -12,11 +12,13 @@ import {
 } from './order-processing.saga';
 import { SagaController } from './saga.controller';
 import { SagaMaintenanceController } from './saga-maintenance.controller';
+import { RedisModule } from '../redis/redis.module';
 
 @Module({
   imports: [
     CqrsModule,
     TypeOrmModule.forFeature([SagaInstance, Order, Payment]),
+    RedisModule,
   ],
   controllers: [SagaController, SagaMaintenanceController],
   providers: [

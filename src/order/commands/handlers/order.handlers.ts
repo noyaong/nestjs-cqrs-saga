@@ -12,6 +12,19 @@ import {
 import { ConflictException, NotFoundException, Logger } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 
+// 중복 Order 예외 클래스
+export class DuplicateOrderException extends ConflictException {
+  constructor(existingOrderId: string, idempotencyKey: string) {
+    super({
+      message: 'Order with this product combination already exists',
+      error: 'DUPLICATE_ORDER',
+      existingOrderId,
+      idempotencyKey,
+      code: 'ORDER_ALREADY_EXISTS'
+    });
+  }
+}
+
 @CommandHandler(CreateOrderCommand)
 export class CreateOrderHandler implements ICommandHandler<CreateOrderCommand> {
   private readonly logger = new Logger(CreateOrderHandler.name);
@@ -25,7 +38,21 @@ export class CreateOrderHandler implements ICommandHandler<CreateOrderCommand> {
   async execute(command: CreateOrderCommand): Promise<Order> {
     const { userId, items, shippingAddress, correlationId } = command;
 
+    this.logger.debug(`🔍 DEBUG Handler: received correlationId = ${correlationId}`);
+
     try {
+      // correlationId가 있다면 기존 주문 확인 (중복 방지)
+      if (correlationId) {
+        const existingOrder = await this.orderRepository.findOne({
+          where: { idempotencyKey: correlationId }
+        });
+
+        if (existingOrder) {
+          this.logger.log(`⚠️ Duplicate order detected with idempotencyKey: ${correlationId}, existing order: ${existingOrder.id}`);
+          throw new DuplicateOrderException(existingOrder.id, correlationId);
+        }
+      }
+
       // 총 금액 계산
       const totalAmount = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
@@ -36,11 +63,12 @@ export class CreateOrderHandler implements ICommandHandler<CreateOrderCommand> {
         items,
         shippingAddress,
         status: OrderStatus.PENDING,
+        idempotencyKey: correlationId,
       });
 
       const savedOrder = await this.orderRepository.save(order);
       
-      this.logger.log(`Order created successfully: ${savedOrder.id}`);
+      this.logger.log(`📦 Order created successfully: ${savedOrder.id}`);
 
       // 이벤트 발행 (트랜잭션 외부에서)
       const event = new OrderCreatedEvent(
@@ -49,7 +77,7 @@ export class CreateOrderHandler implements ICommandHandler<CreateOrderCommand> {
         savedOrder.totalAmount,
         savedOrder.items,
         savedOrder.shippingAddress,
-        correlationId || uuidv4(),
+        correlationId, // correlationId를 그대로 사용 (null이면 Saga에서 처리)
       );
 
       // 비동기로 이벤트 발행 (연결 블로킹 방지)
@@ -60,7 +88,19 @@ export class CreateOrderHandler implements ICommandHandler<CreateOrderCommand> {
       return savedOrder;
       
     } catch (error) {
-      this.logger.error(`Failed to create order for user ${userId}:`, error);
+      // DB 유니크 제약조건 위반 시 Conflict 예외
+      if (error.code === '23505' && error.detail?.includes('idempotencyKey')) {
+        this.logger.log(`⚠️ Database constraint violation - duplicate idempotencyKey: ${correlationId}`);
+        const existingOrder = await this.orderRepository.findOne({
+          where: { idempotencyKey: correlationId }
+        });
+        
+        if (existingOrder) {
+          throw new DuplicateOrderException(existingOrder.id, correlationId);
+        }
+      }
+      
+      this.logger.error(`❌ Failed to create order for user ${userId}:`, error);
       throw error;
     }
   }

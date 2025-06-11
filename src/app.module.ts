@@ -10,9 +10,11 @@ import { PaymentModule } from './payment/payment.module';
 import { SagaModule } from './saga/saga.module';
 import { KafkaModule } from './kafka/kafka.module';
 import { TracingModule } from './tracing/tracing.module';
+import { RedisModule } from './redis/redis.module';
 import { databaseConfig } from './config/database.config';
 import { jwtConfig } from './config/jwt.config';
 import { kafkaConfig } from './config/kafka.config';
+
 
 @Module({
   imports: [
@@ -23,6 +25,7 @@ import { kafkaConfig } from './config/kafka.config';
     CqrsModule,
     DatabaseModule,
     KafkaModule,
+    RedisModule,
     AuthModule,
     OrderModule,
     PaymentModule,
