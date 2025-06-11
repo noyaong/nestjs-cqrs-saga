@@ -30,7 +30,7 @@ if [ "$TOKEN" = "null" ] || [ -z "$TOKEN" ]; then
     echo "❌ 로그인 실패"
     exit 1
 fi
-echo "✅ 로그인 성공: $TOKEN"
+echo "✅ 로그인 성공: $TOKEN" 
 
 # 2.1 각 노드별로 다른 상품 주문 테스트
 echo "4️⃣ [테스트 2.1] 각 노드별 다른 상품 주문 SAGA 보장 테스트"
