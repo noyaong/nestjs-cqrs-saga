@@ -1,0 +1,4 @@
+ report_title | saga_id | status | currentStep | correlationId | duration_seconds | event_count 
+--------------+---------+--------+-------------+---------------+------------------+-------------
+(0 rows)
+

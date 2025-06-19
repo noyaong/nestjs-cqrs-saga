@@ -1,0 +1,7 @@
+=== 부하 테스트 후 커넥션 상태 ===
+ state  | connection_count 
+--------+------------------
+ active |                1
+ idle   |               10
+(2 rows)
+

@@ -1,0 +1,21 @@
+ table_name |                  id                  |  status   |         createdAt          |                   items_preview                    
+------------+--------------------------------------+-----------+----------------------------+----------------------------------------------------
+ orders     | 65ebcc5a-cfb3-49d9-bf6f-37d00fd59649 | paid      | 2025-06-19 10:08:19.055898 | [{"price": 2000, "quantity": 1, "productId": "K8S_
+ orders     | 2c80a508-443c-40fe-a1b7-b45f93d9ae52 | cancelled | 2025-06-19 10:08:13.743394 | [{"price": 1500, "quantity": 1, "productId": "K8S_
+ orders     | 24b8a8ae-06c3-4cab-8b32-33d58d345060 | cancelled | 2025-06-19 10:08:13.678726 | [{"price": 1500, "quantity": 1, "productId": "K8S_
+ orders     | 8d66ceea-f071-4504-96b1-2ee8f871ef78 | paid      | 2025-06-19 10:08:13.667559 | [{"price": 1500, "quantity": 1, "productId": "K8S_
+ orders     | c88879dd-ff42-4f6f-bcea-5cc1bccce818 | paid      | 2025-06-19 10:08:13.655179 | [{"price": 1500, "quantity": 1, "productId": "K8S_
+ orders     | ca403977-9775-4682-9bb6-a55f22464a21 | paid      | 2025-06-19 10:08:13.654318 | [{"price": 1500, "quantity": 1, "productId": "K8S_
+ orders     | ad64471f-0789-42ba-90c9-90415b9d8f0b | cancelled | 2025-06-19 10:08:13.653693 | [{"price": 1500, "quantity": 1, "productId": "K8S_
+ orders     | 5c0502fd-efbf-4860-8900-3d381f09c5c7 | paid      | 2025-06-19 10:08:13.653545 | [{"price": 1500, "quantity": 1, "productId": "K8S_
+ orders     | 61372229-6c77-4f0c-b452-b0d565fa4c1e | cancelled | 2025-06-19 10:08:13.653087 | [{"price": 1500, "quantity": 1, "productId": "K8S_
+ orders     | e3d2d9d3-8b66-4e5a-8602-009586a5258b | paid      | 2025-06-19 10:08:13.652552 | [{"price": 1500, "quantity": 1, "productId": "K8S_
+ orders     | 7bc532b7-1f67-4ef7-8ed3-25fd21dc1326 | cancelled | 2025-06-19 10:08:13.648632 | [{"price": 1500, "quantity": 1, "productId": "K8S_
+ orders     | 387c29c7-012c-4b7e-9a7e-2ebb93f619fb | cancelled | 2025-06-19 10:08:13.640502 | [{"price": 1500, "quantity": 1, "productId": "K8S_
+ orders     | 4ff9f942-8cc7-43d2-91cd-bd238d4aee21 | paid      | 2025-06-19 10:08:13.640418 | [{"price": 1500, "quantity": 1, "productId": "K8S_
+ orders     | 2b1dcd86-50d2-4c66-b75a-1bba1e4f23ce | paid      | 2025-06-19 10:08:13.638638 | [{"price": 1500, "quantity": 1, "productId": "K8S_
+ orders     | f4244373-fe00-4dfb-97cf-5f966a4630f9 | paid      | 2025-06-19 10:08:13.638612 | [{"price": 1500, "quantity": 1, "productId": "K8S_
+ orders     | f5cd4bff-979d-496d-a64e-1e7b2db6e036 | cancelled | 2025-06-19 10:08:13.638558 | [{"price": 1500, "quantity": 1, "productId": "K8S_
+ orders     | 7d2c59f8-a779-4ead-8882-b0d94911c3cb | paid      | 2025-06-19 10:08:08.108569 | [{"price": 1000, "quantity": 1, "productId": "K8S_
+(17 rows)
+

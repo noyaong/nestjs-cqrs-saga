@@ -1,0 +1,11 @@
+=== 현재 락 상태 ===
+      mode       | locktype | table_name |  pid  | granted | lock_count 
+-----------------+----------+------------+-------+---------+------------
+ AccessShareLock | relation | pg_locks   | 15938 | t       |          1
+(1 row)
+
+=== 대기 중인 쿼리 ===
+ pid | state | wait_event_type | wait_event | query_start | query_duration_seconds | query_preview 
+-----+-------+-----------------+------------+-------------+------------------------+---------------
+(0 rows)
+

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nestjs-cqrs-saga
+  labels:
+    name: nestjs-cqrs-saga
+    version: v2.5.0
+    environment: development
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
+  labels:
+    name: monitoring
+    purpose: observability 
