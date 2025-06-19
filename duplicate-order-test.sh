@@ -81,7 +81,7 @@ echo "5️⃣ [테스트 1.2] Payment 실패시 SAGA 보상 트랜잭션 테스�
 FAIL_PRODUCT_ID="PAYMENT_FAIL_TEST_002"
 
 # Payment 실패를 유발하는 특수 productId 사용
-FAIL_RESPONSE=$(curl -s -X POST http://localhost:8090/orders \
+FAIL_RESPONSE=$(curl -s -X POST http://localhost:3000/orders \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $TOKEN" \
   -d "{
@@ -115,7 +115,7 @@ echo "각 노드별로 동일한 상품 ($MULTI_PRODUCT_ID) 요청..."
 for i in $(seq 1 $NODE_REQUESTS); do
     {
         NODE_PORT=$((3000 + $i))
-        RESPONSE=$(curl -s -X POST http://localhost:8090/orders \
+        RESPONSE=$(curl -s -X POST http://localhost:3000/orders \
           -H "Content-Type: application/json" \
           -H "Authorization: Bearer $TOKEN" \
           -d "{
