@@ -146,6 +146,10 @@ done
 wait
 LIGHT_LOAD_END=$(date +%s)
 LIGHT_LOAD_DURATION=$((LIGHT_LOAD_END - LIGHT_LOAD_START))
+# 최소 1초 보장하여 division by zero 방지
+if [ $LIGHT_LOAD_DURATION -eq 0 ]; then
+    LIGHT_LOAD_DURATION=1
+fi
 
 echo "✅ 가벼운 부하 테스트 완료 (${LIGHT_LOAD_DURATION}초)"
 
@@ -177,6 +181,10 @@ done
 wait
 MEDIUM_LOAD_END=$(date +%s)
 MEDIUM_LOAD_DURATION=$((MEDIUM_LOAD_END - MEDIUM_LOAD_START))
+# 최소 1초 보장하여 division by zero 방지
+if [ $MEDIUM_LOAD_DURATION -eq 0 ]; then
+    MEDIUM_LOAD_DURATION=1
+fi
 
 echo "✅ 중간 부하 테스트 완료 (${MEDIUM_LOAD_DURATION}초)"
 
@@ -208,6 +216,10 @@ done
 wait
 HEAVY_LOAD_END=$(date +%s)
 HEAVY_LOAD_DURATION=$((HEAVY_LOAD_END - HEAVY_LOAD_START))
+# 최소 1초 보장하여 division by zero 방지
+if [ $HEAVY_LOAD_DURATION -eq 0 ]; then
+    HEAVY_LOAD_DURATION=1
+fi
 
 echo "✅ 높은 부하 테스트 완료 (${HEAVY_LOAD_DURATION}초)"
 
@@ -312,9 +324,9 @@ Kubernetes 성능 모니터링 보고서 (스키마 수정 버전)
 - 높은 부하 (100개): ${HEAVY_LOAD_DURATION}초
 
 📈 처리량 계산:
-- 가벼운 부하: $(echo "scale=2; 30 / $LIGHT_LOAD_DURATION" | bc -l) req/s
-- 중간 부하: $(echo "scale=2; 50 / $MEDIUM_LOAD_DURATION" | bc -l) req/s
-- 높은 부하: $(echo "scale=2; 100 / $HEAVY_LOAD_DURATION" | bc -l) req/s
+- 가벼운 부하: $(echo "scale=2; 30 / $LIGHT_LOAD_DURATION" | bc -l 2>/dev/null || echo 'N/A') req/s
+- 중간 부하: $(echo "scale=2; 50 / $MEDIUM_LOAD_DURATION" | bc -l 2>/dev/null || echo 'N/A') req/s
+- 높은 부하: $(echo "scale=2; 100 / $HEAVY_LOAD_DURATION" | bc -l 2>/dev/null || echo 'N/A') req/s
 
 📂 생성된 모니터링 파일:
 $(ls -la test-results/monitoring/)
