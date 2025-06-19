@@ -8,6 +8,15 @@
 echo "🔥 중복 요청 Order 생성 테스트 시작"
 echo "========================================"
 
+# PostgreSQL Pod 이름 가져오기
+echo "📋 PostgreSQL Pod 이름 가져오는 중..."
+POSTGRES_POD=$(kubectl get pods -n nestjs-cqrs-saga -l app=postgres -o jsonpath='{.items[0].metadata.name}')
+if [ -z "$POSTGRES_POD" ]; then
+    echo "❌ PostgreSQL Pod를 찾을 수 없습니다"
+    exit 1
+fi
+echo "✅ PostgreSQL Pod: $POSTGRES_POD"
+
 # 테스트 환경 확인
 echo "1️⃣ 테스트 환경 확인 중..."
 curl -s http://localhost:3000/health | jq '.' > test-results/health-check.json
@@ -15,7 +24,7 @@ echo "✅ Health check 완료"
 
 # 기존 데이터 삭제 (users 제외)
 echo "2️⃣ 기존 데이터 정리 중..."
-kubectl exec -n nestjs-cqrs-saga statefulset/postgres -- psql -U postgres -d nestjs_cqrs -c "DELETE FROM orders; DELETE FROM event_store; DELETE FROM saga_instances; DELETE FROM payments;" > test-results/cleanup.log
+kubectl exec -n nestjs-cqrs-saga $POSTGRES_POD -- psql -U postgres -d nestjs_cqrs -c "DELETE FROM orders; DELETE FROM event_store; DELETE FROM saga_instances; DELETE FROM payments;" > test-results/cleanup.log
 echo "✅ 데이터 정리 완료"
 
 # 테스트 사용자 등록 및 로그인
@@ -70,8 +79,8 @@ echo "✅ 동시 요청 완료"
 # 결과 확인
 sleep 3
 echo "📊 결과 확인..."
-ORDERS_COUNT=$(kubectl exec -n nestjs-cqrs-saga statefulset/postgres -- psql -U postgres -d nestjs_cqrs -t -c "SELECT COUNT(*) FROM orders WHERE items::text LIKE '%$PRODUCT_ID%';")
-SAGA_COUNT=$(kubectl exec -n nestjs-cqrs-saga statefulset/postgres -- psql -U postgres -d nestjs_cqrs -t -c "SELECT COUNT(*) FROM saga_instances WHERE \"correlationId\" LIKE '%$PRODUCT_ID%';")
+ORDERS_COUNT=$(kubectl exec -n nestjs-cqrs-saga $POSTGRES_POD -- psql -U postgres -d nestjs_cqrs -t -c "SELECT COUNT(*) FROM orders WHERE items::text LIKE '%$PRODUCT_ID%';")
+SAGA_COUNT=$(kubectl exec -n nestjs-cqrs-saga $POSTGRES_POD -- psql -U postgres -d nestjs_cqrs -t -c "SELECT COUNT(*) FROM saga_instances WHERE \"correlationId\" LIKE '%$PRODUCT_ID%';")
 
 echo "생성된 주문 수: $ORDERS_COUNT (예상: 1개)"
 echo "생성된 SAGA 수: $SAGA_COUNT (예상: 1개)"
@@ -98,8 +107,8 @@ echo "$FAIL_RESPONSE" | jq '.' > test-results/payment-fail-test-1.2.json
 
 # SAGA 보상 트랜잭션 확인
 sleep 5
-FAIL_ORDER_STATUS=$(kubectl exec -n nestjs-cqrs-saga statefulset/postgres -- psql -U postgres -d nestjs_cqrs -t -c "SELECT status FROM orders WHERE items::text LIKE '%$FAIL_PRODUCT_ID%';")
-FAIL_SAGA_STATUS=$(kubectl exec -n nestjs-cqrs-saga statefulset/postgres -- psql -U postgres -d nestjs_cqrs -t -c "SELECT status FROM saga_instances WHERE \"correlationId\" LIKE '%$FAIL_PRODUCT_ID%';")
+FAIL_ORDER_STATUS=$(kubectl exec -n nestjs-cqrs-saga $POSTGRES_POD -- psql -U postgres -d nestjs_cqrs -t -c "SELECT status FROM orders WHERE items::text LIKE '%$FAIL_PRODUCT_ID%';")
+FAIL_SAGA_STATUS=$(kubectl exec -n nestjs-cqrs-saga $POSTGRES_POD -- psql -U postgres -d nestjs_cqrs -t -c "SELECT status FROM saga_instances WHERE \"correlationId\" LIKE '%$FAIL_PRODUCT_ID%';")
 
 echo "실패 주문 상태: $FAIL_ORDER_STATUS (예상: cancelled 또는 failed)"
 echo "실패 SAGA 상태: $FAIL_SAGA_STATUS (예상: failed 또는 compensated)"
@@ -136,8 +145,8 @@ echo "✅ Multi-node 요청 완료"
 
 # Multi-node 결과 확인
 sleep 3
-MULTI_ORDERS_COUNT=$(kubectl exec -n nestjs-cqrs-saga statefulset/postgres -- psql -U postgres -d nestjs_cqrs -t -c "SELECT COUNT(*) FROM orders WHERE items::text LIKE '%$MULTI_PRODUCT_ID%';")
-MULTI_SAGA_COUNT=$(kubectl exec -n nestjs-cqrs-saga statefulset/postgres -- psql -U postgres -d nestjs_cqrs -t -c "SELECT COUNT(*) FROM saga_instances WHERE \"correlationId\" LIKE '%$MULTI_PRODUCT_ID%';")
+MULTI_ORDERS_COUNT=$(kubectl exec -n nestjs-cqrs-saga $POSTGRES_POD -- psql -U postgres -d nestjs_cqrs -t -c "SELECT COUNT(*) FROM orders WHERE items::text LIKE '%$MULTI_PRODUCT_ID%';")
+MULTI_SAGA_COUNT=$(kubectl exec -n nestjs-cqrs-saga $POSTGRES_POD -- psql -U postgres -d nestjs_cqrs -t -c "SELECT COUNT(*) FROM saga_instances WHERE \"correlationId\" LIKE '%$MULTI_PRODUCT_ID%';")
 
 echo "Multi-node 생성된 주문 수: $MULTI_ORDERS_COUNT (예상: 1개)"
 echo "Multi-node 생성된 SAGA 수: $MULTI_SAGA_COUNT (예상: 1개)"
@@ -151,7 +160,7 @@ echo "1.3 Multi-node 중복방지: 주문 $MULTI_ORDERS_COUNT개 생성 (성공 
 
 # 상세 데이터 덤프
 echo "📊 상세 데이터 덤프 중..."
-kubectl exec -n nestjs-cqrs-saga statefulset/postgres -- psql -U postgres -d nestjs_cqrs -c "
+kubectl exec -n nestjs-cqrs-saga $POSTGRES_POD -- psql -U postgres -d nestjs_cqrs -c "
 SELECT 
     'orders' as table_name,
     id, items, status, \"createdAt\" 
@@ -159,7 +168,7 @@ FROM orders
 ORDER BY \"createdAt\" DESC;
 " > test-results/duplicate-test-final-orders.txt
 
-kubectl exec -n nestjs-cqrs-saga statefulset/postgres -- psql -U postgres -d nestjs_cqrs -c "
+kubectl exec -n nestjs-cqrs-saga $POSTGRES_POD -- psql -U postgres -d nestjs_cqrs -c "
 SELECT 
     'saga_instances' as table_name,
     id, \"correlationId\", status, step, \"createdAt\" 

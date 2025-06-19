@@ -116,6 +116,10 @@ echo "4. 동시 주문 테스트 (3개)..."
 declare -a CONCURRENT_ORDER_IDS
 CONCURRENT_START_TIME=$(date +%s%N)
 
+# 임시 파일을 사용하여 subshell 결과 저장
+TEMP_DIR=$(mktemp -d)
+trap "rm -rf $TEMP_DIR" EXIT
+
 for i in {1..3}; do
     {
         CONCURRENT_ORDER_ID="SAGA_CORRECTED_CONCURRENT_${i}_$(date +%s)"
@@ -134,11 +138,22 @@ for i in {1..3}; do
         
         ORDER_ID=$(echo "$RESPONSE" | jq -r '.id' 2>/dev/null || echo "unknown")
         echo "동시 주문 $i 생성됨: $ORDER_ID"
-        CONCURRENT_ORDER_IDS[$i]=$ORDER_ID
+        
+        # 결과를 임시 파일에 저장
+        echo "$ORDER_ID" > "$TEMP_DIR/order_$i.txt"
     } &
 done
 
 wait
+
+# 임시 파일에서 결과 읽어오기
+for i in {1..3}; do
+    if [ -f "$TEMP_DIR/order_$i.txt" ]; then
+        CONCURRENT_ORDER_IDS[$i]=$(cat "$TEMP_DIR/order_$i.txt")
+    else
+        CONCURRENT_ORDER_IDS[$i]="unknown"
+    fi
+done
 CONCURRENT_END_TIME=$(date +%s%N)
 CONCURRENT_DURATION=$(( ($CONCURRENT_END_TIME - $CONCURRENT_START_TIME) / 1000000 ))
 
