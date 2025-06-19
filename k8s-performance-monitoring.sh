@@ -140,12 +140,7 @@ for i in {1..30}; do
           }" > /dev/null
     } &
     
-    sleep 0.1  # 100ms 간격으로 10 req/s - 백그라운드 작업 밖으로 이동
-    
-    # 매 10개마다 잠시 대기
-    if [ $((i % 10)) -eq 0 ]; then
-        sleep 1
-    fi
+    sleep 0.1  # 100ms 간격으로 10 req/s 달성
 done
 
 wait
