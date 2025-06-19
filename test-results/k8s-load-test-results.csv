@@ -1,0 +1,4 @@
+TestName,Requests,Success,Error,Duration_ms,Throughput_rps
+중간부하테스트,100,100,0,1063,94.07
+고부하테스트,200,200,0,1360,147.05
+극한부하테스트,500,500,0,2924,170.99

@@ -1,0 +1,21 @@
+   table_name   |                  id                  |   status    | currentStep |         createdAt          |      correlation_preview       
+----------------+--------------------------------------+-------------+-------------+----------------------------+--------------------------------
+ saga_instances | 55df25f3-8157-4037-9e5c-dba16f775b65 | completed   | completed   | 2025-06-19 10:08:19.139733 | f890e202e13378be5810f36c1fa9f2
+ saga_instances | 650407af-6cce-44b2-ba27-bce8b099ec5b | compensated | compensated | 2025-06-19 10:08:14.350561 | ebe809c72893cb63c4a9b587d3baac
+ saga_instances | 7f83d4bf-bc2f-41b4-a98e-3db9209cef00 | completed   | completed   | 2025-06-19 10:08:14.15872  | b52726e83c910e59869452c9efe5af
+ saga_instances | 4f3a3730-f0b1-495e-a3a6-0459a1c868df | compensated | compensated | 2025-06-19 10:08:14.158629 | c40f4ab825a028c4e5703eda762a24
+ saga_instances | e9f4d9d9-cc0e-4afc-ac46-5f6a945b497b | completed   | completed   | 2025-06-19 10:08:14.158508 | a0753c94cdef910bdb3476c1263a35
+ saga_instances | ad42a840-0474-4181-8348-08628c056f6c | completed   | completed   | 2025-06-19 10:08:14.15828  | 37ac19458eb64614f7bdf6c5577d26
+ saga_instances | 792cd4d7-fa47-4948-b7ab-9287be84dd3c | completed   | completed   | 2025-06-19 10:08:14.157979 | e6b0681fb4030b956753c7cae199ed
+ saga_instances | 112e935a-025f-4868-a7e0-6b577d5b451e | compensated | compensated | 2025-06-19 10:08:14.146375 | 4a5616136c7911f9fcea7905c7d44e
+ saga_instances | 76d53518-3ae5-4368-8fed-ff91aaa4b262 | compensated | compensated | 2025-06-19 10:08:14.082054 | 3e2488741d73eee119efac3adedc01
+ saga_instances | 2a7addae-a73f-40a7-9cc9-862670af3fb9 | completed   | completed   | 2025-06-19 10:08:14.082002 | 5bede992f3f604e9802845850cd484
+ saga_instances | 8817ddc9-b526-4bf3-84d2-2ba73059184d | compensated | compensated | 2025-06-19 10:08:14.08195  | 46fe5fd5bafd372f1e4811fdd976d5
+ saga_instances | 19e0dca3-e315-4a9d-92d1-332fac4ff868 | compensated | compensated | 2025-06-19 10:08:13.986928 | 6d6dabf0d11f6ad96eca00bea781dd
+ saga_instances | b4bd7e29-97a9-4671-839c-0c142f1e16ec | compensated | compensated | 2025-06-19 10:08:13.854867 | acf9eecea1ef26b53260c0d031e07c
+ saga_instances | 40fd7217-e96b-47f6-a375-b7cc4feddff7 | completed   | completed   | 2025-06-19 10:08:13.854393 | 44d428bd0b451f5309789ac2171084
+ saga_instances | d4daddd9-f1e4-4574-8446-0d16b46140ee | completed   | completed   | 2025-06-19 10:08:13.8543   | aadccb85bb93687cc043eb381c19f7
+ saga_instances | 59a681b1-1233-4441-80a7-09903c91385e | completed   | completed   | 2025-06-19 10:08:13.841895 | 390edeaa127a957a509f62400eeead
+ saga_instances | 4b758e29-cb59-4626-b3d3-78d42b1a9a50 | completed   | completed   | 2025-06-19 10:08:08.161871 | df15c6be62e43e116fda00b6fe588e
+(17 rows)
+

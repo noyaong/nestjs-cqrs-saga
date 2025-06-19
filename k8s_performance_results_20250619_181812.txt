@@ -1,0 +1,59 @@
+=== NestJS CQRS+SAGA Kubernetes 성능 테스트 시작 ===
+테스트 시작 시간: Thu Jun 19 18:18:12 KST 2025
+Kubernetes 환경: minikube
+
+0. 포트 포워딩 상태 확인...
+✅ 포트 포워딩 확인 완료
+
+1. 테스트 계정 생성 중...
+✅ 토큰 획득 성공
+
+2. 단일 요청 응답 시간 테스트...
+  요청 1: 20ms (HTTP: 201)
+  요청 2: 17ms (HTTP: 201)
+  요청 3: 16ms (HTTP: 201)
+  요청 4: 18ms (HTTP: 201)
+  요청 5: 17ms (HTTP: 201)
+
+3. 동시 요청 테스트 (10개)...
+  10개 동시 요청 완료: 358ms
+
+4. 중간 강도 부하 테스트 (50개)...
+  50개 요청 결과:
+    - 성공: 50
+    - 실패: 0
+    - 총 시간: 1099ms
+    - 처리량: 45.49 req/sec
+
+5. Kubernetes 클러스터 상태 확인...
+  Pod 상태:
+    kafka-c67f5ddcd-n8vft        1/1   Running   0     62m
+    nestjs-app-f6c69cc46-4bcql   1/1   Running   0     60m
+    nestjs-app-f6c69cc46-4vl8l   1/1   Running   0     60m
+    nestjs-app-f6c69cc46-hfq47   1/1   Running   0     60m
+    postgres-0                   1/1   Running   0     73m
+    redis-b95fc976d-p6p8j        1/1   Running   0     73m
+    zookeeper-bd47bc987-7dhff    1/1   Running   0     70m
+  Service 상태:
+    kafka-service         ClusterIP      10.107.1.199     <none>      9092/TCP,29092/TCP           68m
+    nestjs-loadbalancer   LoadBalancer   10.104.106.214   127.0.0.1   3000:30000/TCP               60m
+    nestjs-service        ClusterIP      10.108.96.15     <none>      3000/TCP                     60m
+    postgres-service      ClusterIP      10.106.29.170    <none>      5432/TCP                     73m
+    redis-service         ClusterIP      10.105.27.182    <none>      6379/TCP                     73m
+    zookeeper-service     ClusterIP      10.105.220.115   <none>      2181/TCP,2888/TCP,3888/TCP   70m
+  리소스 사용량:
+
+6. SAGA 패턴 동작 확인...
+  주문 ID: a4f5b3f5-3d2f-4abf-9577-50b2e0769efd
+    초기 상태: pending
+    3초 후 상태: pending
+    ⚠️  SAGA 패턴 상태 변화 미확인
+7. 데이터베이스 상태 확인...
+  데이터베이스 통계:
+    - 총 주문 수:     70
+    - 총 SAGA 수:     44
+    - 총 이벤트 수:    166
+
+=== Kubernetes 성능 테스트 완료 ===
+테스트 종료 시간: Thu Jun 19 18:18:18 KST 2025
+결과 파일: k8s_performance_results_20250619_181812.txt

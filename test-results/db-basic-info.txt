@@ -1,0 +1,22 @@
+=== PostgreSQL 버전 및 설정 ===
+                                                     postgresql_version                                                      
+-----------------------------------------------------------------------------------------------------------------------------
+ PostgreSQL 15.13 (Debian 15.13-1.pgdg120+1) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14) 12.2.0, 64-bit
+(1 row)
+
+=== 데이터베이스 크기 ===
+ database_name | size  
+---------------+-------
+ nestjs_cqrs   | 11 MB
+(1 row)
+
+=== 테이블별 데이터 크기 ===
+ schemaname |   tablename    |  size   | table_size | index_size 
+------------+----------------+---------+------------+------------
+ public     | event_store    | 1520 kB | 1032 kB    | 488 kB
+ public     | orders         | 696 kB  | 416 kB     | 280 kB
+ public     | saga_instances | 400 kB  | 320 kB     | 80 kB
+ public     | payments       | 208 kB  | 128 kB     | 80 kB
+ public     | users          | 64 kB   | 8192 bytes | 56 kB
+(5 rows)
+

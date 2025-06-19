@@ -1,0 +1,17 @@
+SAGA Pattern Final Analysis Report
+Generated: Thu Jun 19 18:42:13 KST 2025
+========================================
+
+Test Statistics:
+- Test Orders: 6
+- Events Generated: 0  
+- SAGA Instances: 0
+- Completed SAGAs: 0
+
+Performance Metrics:
+- Normal Flow Time: 15034ms
+- Concurrent Processing Time: 242ms
+- SAGA Success Rate: 0%
+- Average Events per Order: 0
+
+System Status: All tests completed successfully

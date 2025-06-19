@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nestjs-configmap
+  namespace: nestjs-cqrs-saga
+  labels:
+    app: nestjs
+    component: application
+data:
+  # 데이터베이스 설정
+  DATABASE_HOST: "postgres-service"
+  DATABASE_PORT: "5432"
+  DATABASE_NAME: "nestjs_cqrs"
+  
+  # Redis 설정
+  REDIS_HOST: "redis-service"
+  REDIS_PORT: "6379"
+  
+  # Kafka 설정
+  KAFKA_BROKER: "kafka-service:9092"
+  
+  # 애플리케이션 설정
+  PORT: "3000"
+  
+  # JWT 설정 (개발환경용)
+  JWT_SECRET: "your-jwt-secret-key"
+  JWT_EXPIRES_IN: "24h"
+  
+  # 로그 레벨
+  LOG_LEVEL: "debug" 

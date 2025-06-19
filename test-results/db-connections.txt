@@ -1,0 +1,17 @@
+=== 현재 활성 커넥션 ===
+ state  | connection_count | avg_duration_seconds 
+--------+------------------+----------------------
+ idle   |                4 |                    1
+ active |                1 |                    0
+(2 rows)
+
+=== 커넥션 상세 정보 ===
+  pid  | usename  | application_name | client_addr | state  | connection_age_seconds | state_age_seconds 
+-------+----------+------------------+-------------+--------+------------------------+-------------------
+ 15910 | postgres | psql             |             | active |               0.000755 |         -0.000001
+ 15875 | postgres |                  | 10.244.0.9  | idle   |               0.728038 |          0.036774
+ 15874 | postgres |                  | 10.244.0.9  | idle   |               0.728395 |          0.037011
+ 15873 | postgres |                  | 10.244.0.9  | idle   |               0.736863 |          0.713428
+ 15872 | postgres |                  | 10.244.0.9  | idle   |               1.427341 |          0.036821
+(5 rows)
+

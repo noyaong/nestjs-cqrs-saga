@@ -1,0 +1,21 @@
+SAGA Pattern Corrected Analysis Report
+Generated: Thu Jun 19 18:55:42 KST 2025
+========================================
+
+Test Statistics:
+- Test Orders: 4
+- Events Generated: 3  
+- SAGA Instances: 1
+- Completed SAGAs: 188
+
+Performance Metrics:
+- Normal Flow Time: 15023ms
+- Concurrent Processing Time: 29ms
+- SAGA Success Rate: 18800.00%
+- Average Events per Order: .75
+
+Order Details:
+- Normal Order ID: a09ba399-f52d-44fb-b8b6-7fc8f3266ccc
+- Concurrent Order IDs: 
+
+System Status: All tests completed successfully with proper ID tracking

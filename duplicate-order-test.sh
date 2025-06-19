@@ -10,23 +10,23 @@ echo "========================================"
 
 # 테스트 환경 확인
 echo "1️⃣ 테스트 환경 확인 중..."
-curl -s http://localhost:8090/health | jq '.' > test-results/health-check.json
+curl -s http://localhost:3000/health | jq '.' > test-results/health-check.json
 echo "✅ Health check 완료"
 
 # 기존 데이터 삭제 (users 제외)
 echo "2️⃣ 기존 데이터 정리 중..."
-docker exec -i nestjs-cqrs-saga-postgres-1 psql -U postgres -d nestjs_cqrs -c "DELETE FROM orders; DELETE FROM event_store; DELETE FROM saga_instances; DELETE FROM payments;" > test-results/cleanup.log
+kubectl exec -n nestjs-cqrs-saga deployment/postgres -- psql -U postgres -d nestjs_cqrs -c "DELETE FROM orders; DELETE FROM event_store; DELETE FROM saga_instances; DELETE FROM payments;" > test-results/cleanup.log
 echo "✅ 데이터 정리 완료"
 
 # 테스트 사용자 등록 및 로그인
 echo "3️⃣ 테스트 사용자 등록 중..."
-REGISTER_RESPONSE=$(curl -s -X POST http://localhost:8090/auth/register \
+REGISTER_RESPONSE=$(curl -s -X POST http://localhost:3000/auth/register \
   -H "Content-Type: application/json" \
   -d '{"email": "jsnoh@test.com", "password": "aimmed", "firstName": "JS", "lastName": "Noh"}') 
 echo "등록 응답: $REGISTER_RESPONSE" 
 
 echo "테스트 사용자 로그인 중..."
-LOGIN_RESPONSE=$(curl -s -X POST http://localhost:8090/auth/login \
+LOGIN_RESPONSE=$(curl -s -X POST http://localhost:3000/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email": "jsnoh@test.com", "password": "aimmed"}')
 
@@ -48,7 +48,7 @@ echo "동일한 상품 ($PRODUCT_ID)으로 $CONCURRENT_REQUESTS 개의 동시 �
 
 for i in $(seq 1 $CONCURRENT_REQUESTS); do
     {
-        RESPONSE=$(curl -s -X POST http://localhost:8090/orders \
+        RESPONSE=$(curl -s -X POST http://localhost:3000/orders \
           -H "Content-Type: application/json" \
           -H "Authorization: Bearer $TOKEN" \
           -d "{
@@ -70,8 +70,8 @@ echo "✅ 동시 요청 완료"
 # 결과 확인
 sleep 3
 echo "📊 결과 확인..."
-ORDERS_COUNT=$(docker exec -i nestjs-cqrs-saga-postgres-1 psql -U postgres -d nestjs_cqrs -t -c "SELECT COUNT(*) FROM orders WHERE items::text LIKE '%$PRODUCT_ID%';")
-SAGA_COUNT=$(docker exec -i nestjs-cqrs-saga-postgres-1 psql -U postgres -d nestjs_cqrs -t -c "SELECT COUNT(*) FROM saga_instances WHERE \"correlationId\" LIKE '%$PRODUCT_ID%';")
+ORDERS_COUNT=$(kubectl exec -n nestjs-cqrs-saga deployment/postgres -- psql -U postgres -d nestjs_cqrs -t -c "SELECT COUNT(*) FROM orders WHERE items::text LIKE '%$PRODUCT_ID%';")
+SAGA_COUNT=$(kubectl exec -n nestjs-cqrs-saga deployment/postgres -- psql -U postgres -d nestjs_cqrs -t -c "SELECT COUNT(*) FROM saga_instances WHERE \"correlationId\" LIKE '%$PRODUCT_ID%';")
 
 echo "생성된 주문 수: $ORDERS_COUNT (예상: 1개)"
 echo "생성된 SAGA 수: $SAGA_COUNT (예상: 1개)"

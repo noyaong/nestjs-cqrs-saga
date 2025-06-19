@@ -1,0 +1,12 @@
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MGVlYmFjMi03ZDZlLTRhN2EtYTlmNi0xOWUxZTAyNWQwOGIiLCJlbWFpbCI6Ims4cy1kdXBsaWNhdGUtdGVzdC0xNzUwMzI3Njg2QGV4YW1wbGUuY29tIiwicm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNzUwMzI3Njg3LCJleHAiOjE3NTA0MTQwODd9.b9SdYWWg2U8vRmdg4aH8675SGq6bEXwBFaRAN6Tb0R8",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MGVlYmFjMi03ZDZlLTRhN2EtYTlmNi0xOWUxZTAyNWQwOGIiLCJlbWFpbCI6Ims4cy1kdXBsaWNhdGUtdGVzdC0xNzUwMzI3Njg2QGV4YW1wbGUuY29tIiwicm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNzUwMzI3Njg3LCJleHAiOjE3NTA5MzI0ODd9.BHoaZN5MP_dNpDBIjZmS5vMIcoMT_rdIEBjRBBEiesg",
+  "user": {
+    "id": "90eebac2-7d6e-4a7a-a9f6-19e1e025d08b",
+    "email": "k8s-duplicate-test-1750327686@example.com",
+    "firstName": "K8s",
+    "lastName": "Duplicate",
+    "role": "customer",
+    "status": "active"
+  }
+}
